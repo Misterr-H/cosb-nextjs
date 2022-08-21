@@ -1,14 +1,10 @@
 import {useRouter} from "next/router";
 import Navbar from "../../components/Navbar";
-import Image from "next/image";
-import {EditProfileChip} from "../../components/ActionChip";
-import SettingsIcon from '@mui/icons-material/Settings';
-import {motion} from "framer-motion";
 import ProfileCard from "../../components/pageComponents/profilePageComponents/ProfileCard";
 
 export default function ProfilePage() {
     const router = useRouter();
-    const { slug } = router.query;
+    const {slug} = router.query;
 
     return (
         <div className={'bg-gray'}>

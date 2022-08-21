@@ -1,25 +1,19 @@
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import Navbar from "../../components/Navbar";
 import {TitleCard} from "../../components/pageComponents/coursePageComponents/TitleCard";
 import {DescriptionCard} from "../../components/pageComponents/coursePageComponents/DescriptionCard";
 import {InfoCard} from "../../components/pageComponents/coursePageComponents/InfoCard";
 import TitleCardMobile
     from "../../components/pageComponents/coursePageComponents/smallScreenComponents/TitleCardMobile";
-import NavigationCard from "../../components/pageComponents/coursePageComponents/smallScreenComponents/NavigationCard";
 import InfoCardMobile from "../../components/pageComponents/coursePageComponents/smallScreenComponents/InfoCardMobile";
-import RelatedCoursesMobile
-    from "../../components/pageComponents/coursePageComponents/smallScreenComponents/RelatedCoursesMobile";
-import ReviewsMobile from "../../components/pageComponents/coursePageComponents/smallScreenComponents/ReviewsMobile";
-import BottomButton from "../../components/pageComponents/coursePageComponents/smallScreenComponents/BottomButton";
-import {useState} from "react";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import {CircularProgress} from "@mui/material";
 
-export default function CoursePage() {
+export default function CoursePage({course, hasError}) {
     const router = useRouter();
-    const { slug } = router.query;
+    const {id} = router.query;
     const [title, setTitle] = useState("");
     const [price, setPrice] = useState("");
     const [platform, setPlatform] = useState("");
@@ -30,39 +24,56 @@ export default function CoursePage() {
     const [rating, setRating] = useState(0);
     const [link, setLink] = useState("");
 
+    if (hasError) {
+        return <h1>Invalid course, Error 404 - Not found!</h1>
+    }
+
+
     useEffect(() => {
-        async function fetchData() {
-            if(slug)
-                await axios.get(`https://cosbapi.herokuapp.com/api/courses/courses-detail-view/${slug}`)
-                    .then(res => {
-                        setTitle(res.data.name);
-                        setPrice(res.data.price);
-                        setPlatform(res.data.platform);
-                        setLanguage(res.data.language);
-                        setCertificate(res.data.certificate);
-                        setImage(res.data.image);
-                        setRating(res.data.overall_rating);
-                        setLink(res.data.link);
-                        setLoading(false);
-                    })
-        }
-        fetchData();
-    }, [slug])
+        setTitle(course.name);
+        setPrice(course.price);
+        setPlatform(course.platform);
+        setLanguage(course.language);
+        setCertificate(course.certificate);
+        setImage(course.image);
+        setRating(course.overall_rating);
+        setLink(course.link);
+        setLoading(false);
+    }, []);
+
+    /*useEffect(() => {
+            async function fetchData() {
+                if (slug)
+                    await axios.get(`https://cosbapi.herokuapp.com/api/courses/courses-detail-view/${slug}`)
+                        .then(res => {
+                            setTitle(res.data.name);
+                            setPrice(res.data.price);
+                            setPlatform(res.data.platform);
+                            setLanguage(res.data.language);
+                            setCertificate(res.data.certificate);
+                            setImage(res.data.image);
+                            setRating(res.data.overall_rating);
+                            setLink(res.data.link);
+                            setLoading(false);
+                        })
+            }
+            fetchData();
+        }, [slug]);*/
 
 
     return loading ? (
         <div className={'flex justify-center items-center w-full h-screen bg-gray-500'}>
             <div className={'bg-white p-5 rounded-lg border-gray-200 border-2'}>
-                <Box alignItems="center" justifyContent="center"><CircularProgress /></Box>
+                <Box alignItems="center" justifyContent="center"><CircularProgress/></Box>
             </div>
         </div>
     ) : (
         <div className={'bg-grey'}>
             <Navbar/>
             <div className={'lg:px-20 flex md:flex-row flex-col pt-20'}>
-                 {/*This is for Bigger Screens */}
+                {/*This is for Bigger Screens */}
                 <div className={'hidden md:flex flex-col w-2/3'}>
-                    <TitleCard title={title} platform={platform} rating={rating} />
+                    <TitleCard title={title} platform={platform} rating={rating}/>
                     <DescriptionCard className={'mt-5'}/>
                 </div>
                 <div className={'hidden md:flex flex-col w-1/3 ml-5'}>
@@ -77,7 +88,7 @@ export default function CoursePage() {
                 </div>
 
 
-                 {/*This is for Smaller Screens*/}
+                {/*This is for Smaller Screens*/}
                 <div className={'flex md:hidden flex-col'}>
                     <TitleCardMobile
                         title={title}
@@ -101,4 +112,36 @@ export default function CoursePage() {
             </div>
         </div>
     )
+}
+
+export async function getStaticProps(context) {
+    const courseId = context.params.id;
+    let res = await axios.get(`https://cosbapi.herokuapp.com/api/courses/courses-detail-view/${courseId}`);
+
+    const course = res.data;
+
+    if (!course) {
+        return {
+            props: {hasError: true},
+        };
+    }
+
+    return {
+        props: {
+            course: course
+        }
+    }
+}
+
+export async function getStaticPaths() {
+    // Call an external API endpoint to get posts
+    let res = await axios.get("https://cosbapi.herokuapp.com/api/courses/courses-list-view/");
+    console.log(res.data);
+
+    const paths = res.data.map(course => `/course/${course.id}`)
+
+    return {
+        paths,
+        fallback: false
+    }
 }

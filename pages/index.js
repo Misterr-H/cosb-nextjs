@@ -1,11 +1,9 @@
 import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
 import Navbar from "../components/Navbar";
 import Action from "../components/pageComponents/homePageComponents/Action";
 import Card from "../components/pageComponents/homePageComponents/Card";
 import {useEffect, useState} from "react";
-import {CircularProgress, Skeleton} from "@mui/material";
+import {CircularProgress} from "@mui/material";
 import Box from "@mui/material/Box";
 import axios from "axios";
 
@@ -21,7 +19,8 @@ export default function Home() {
                 })
 
         }
-    fetchData().then(r => setLoading(false));
+
+        fetchData().then(r => setLoading(false));
     }, [])
 
     const onSearchChange = async (e) => {
@@ -37,21 +36,21 @@ export default function Home() {
 
     }
 
-    return  (
+    return (
         <div>
-          <Head>
-            <title>cosb</title>
-            <meta name="description" content="cosb" />
-            <link rel="icon" href="/favicon.ico" />
-          </Head>
+            <Head>
+                <title>cosb</title>
+                <meta name="description" content="cosb"/>
+                <link rel="icon" href="/favicon.ico"/>
+            </Head>
 
-          <Navbar/>
-          <Action onSearchChange={onSearchChange}/>
+            <Navbar/>
+            <Action onSearchChange={onSearchChange}/>
 
 
             {loading ? (
                 <div className={'flex justify-center items-center w-full'}>
-                    <Box alignItems="center" justifyContent="center"><CircularProgress /></Box>
+                    <Box alignItems="center" justifyContent="center"><CircularProgress/></Box>
                     {/*<Skeleton variant="rectangular" width={'80%'} height={200} />*/}
                 </div>
             ) : (
@@ -66,9 +65,9 @@ export default function Home() {
                           platform={course.platform}
                           price={course.price}
                     />))
-            ) }
+            )}
 
         </div>
 
-  )
+    )
 }
