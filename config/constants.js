@@ -1,5 +1,6 @@
 
 
+
 const BACKEND_URL = 'https://cosbapi.herokuapp.com/'
 
 export const ALL_COURSES = `${BACKEND_URL}api/courses/all-courses-view/`;
@@ -14,4 +15,5 @@ export const REVIEWS = `${BACKEND_URL}api/courses/reviews/`;
 export const TEST_TOKEN = `${BACKEND_URL}api/courses/test-token/`;
 export const ALL_ROADMAPS = `${BACKEND_URL}api/roadmaps/roadmap-list-view/`
 export const ROADMAP_DETAILS = `${BACKEND_URL}api/roadmaps/roadmap-detail-view/`
+
 
